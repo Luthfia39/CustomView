@@ -39,21 +39,35 @@ public class EditTextWithClear extends AppCompatEditText {
         setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+
                 // there are 4 position for component: start(no.0), top(no.1), end(no.2), bottom(no.3)
                 // check if there is a clear button at no.2 (end)
                 if (getCompoundDrawablesRelative()[2] != null) {
-
-                    // start/right border of clear button
-                    float clearButtonStartPosition = (getWidth() - getPaddingEnd()
-                            - mClearButtonImage.getIntrinsicWidth());
-
                     // value to check whether the button has been clicked or not
                     boolean isClicked = false;
 
-                    // if the clicked position is more than clearButtonStartPosition,
-                    // then the clear button was successfully clicked
-                    if (event.getX() > clearButtonStartPosition) {
-                        isClicked = true;
+                    // check the layout view
+                    if (getLayoutDirection() == LAYOUT_DIRECTION_LTR){
+                        // clear button starts on the right side of the edit text (Used for LTR languages)
+                        float clearButtonStartPosition = (getWidth() - getPaddingEnd()
+                                - mClearButtonImage.getIntrinsicWidth());
+
+                        // if the clicked position is after clearButtonStartPosition,
+                        // then the clear button was successfully clicked
+                        if (event.getX() > clearButtonStartPosition) {
+                            isClicked = true;
+                        }
+
+                    }else{
+                        // clear button ends on the left side of the field (Used for RTL languages)
+                        float clearButtonEndPosition = mClearButtonImage
+                                .getIntrinsicWidth() + getPaddingStart();
+
+                        // if the clicked position is before clearButtonStartPosition,
+                        // then the clear button was successfully clicked
+                        if (event.getX() < clearButtonEndPosition) {
+                            isClicked = true;
+                        }
                     }
 
                     if (isClicked) {
